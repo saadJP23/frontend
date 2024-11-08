@@ -9,10 +9,11 @@ export const Register = () => {
     password: "",
   });
 
-  const navigate = useNavigate()
-  const handleChange = (e) => {
+  const [error, setError] = useState("");
 
-     const {name, value} = e.target
+  const navigate = useNavigate();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
     setNewUser((prevalue) => {
       return {
@@ -23,24 +24,48 @@ export const Register = () => {
   };
 
   const registerMe = async (e) => {
-    e.preventDefault()
-    // console.log("Rigestration button clicked ") // this line works   
-    
-    try{
-      await axios.post("http://localhost:8000/Register", newUser)
-      navigate('/')
-    }catch(err){
-      console.log("Rigestration error occured")
-    }
+    e.preventDefault();
+    // console.log("Rigestration button clicked ") // this line works
 
-  }
+    try {
+      let response = await axios.post(
+        "http://localhost:8000/register",
+        newUser
+      );
+      if (response.data.message === "Email already exist.") {
+        setError("Email aready exist.");
+      } else {
+        login(newUser.email, newUser.password);
+      }
+    } catch (err) {
+      setError("Registration error occured.");
+    }
+  };
+
+  const login = async (email, password) => {
+    const response = await axios.post("http://localhost:8000/login", {
+      email,
+      password,
+    });
+
+    if (response.status === 200) {
+      const userInfo = {
+        userId: response.data.userId,
+        username: response.data.username,
+        highestScore: response.data.highestScore,
+      };
+
+      localStorage.setItem("user_data", JSON.stringify(userInfo));
+      navigate("/");
+    }
+  };
   return (
     <>
       <form onSubmit={registerMe}>
         <div className="register-pg">
           <h3>Register Form</h3>
           <input
-          name="username"
+            name="username"
             id="username"
             placeholder="Username"
             type="name"
@@ -57,7 +82,7 @@ export const Register = () => {
           ></input>
 
           <input
-          name="password"
+            name="password"
             id="password"
             type="password"
             value={newUser.password}
@@ -65,10 +90,9 @@ export const Register = () => {
             onChange={handleChange}
           ></input>
 
-          <button type="submit" >
-            Register me
-          </button>
+          <button type="submit">Register me</button>
         </div>
+        {error && <p>{error}</p>}
       </form>
     </>
   );

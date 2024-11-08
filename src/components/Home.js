@@ -11,7 +11,7 @@ export const Home = () => {
   return (
     <>
     <p>Wanna try this game?</p>
-    <button type="submit" onClick={handleClick}>Play</button>
+    <button type="button" onClick={handleClick}>Play</button>
     </>
   );
 };

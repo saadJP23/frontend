@@ -9,7 +9,7 @@ export const Movie = () => {
 
   let [newMovie, setNewMovie] = useState({
     title: "",
-    qoute: "",
+    quote: "",
     url: "",
   });
 
@@ -56,7 +56,7 @@ export const Movie = () => {
           <input
             type="text"
             name="quote"
-            value={newMovie.qoute}
+            value={newMovie.quote}
             placeholder="Quote"
             onChange={handleChange}
           ></input>
